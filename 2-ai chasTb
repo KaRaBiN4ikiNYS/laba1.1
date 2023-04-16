@@ -1,126 +1,77 @@
 #include <iostream>
-#include <string>
+#include <fstream>
 #include <vector>
-using namespace std;
+#include <string>
+#include <algorithm>
 
-//Åñòü áèáëèîòåêà, â êîòîðîé õðàíÿòñÿ äâà âèäà êíèã – õóäîæåñòâåííûå è
-//òåõíè÷åñêèå.
-//Íàäî ñîçäàòü ïðîãðàììó, â êîòîðîé :
-//À) íàïîëíèòü áèáëèîòåêó íåñêîëüêèìè ðàçíûìè êíèãàìè(Ïðèìå÷àíèå1: ó
-//ïîëüçîâàòåëüñêîãî êîíñòðóêòîðà êëàññà äîëæíî áûòü 3 ïàðàìåòðà – äëÿ óêàçàíèÿ
-//èìåíè àâòîðà, íàçâàíèÿ êíèãè è òèïà, õóäîæåñòâåííàÿ èëè òåõíè÷åñêàÿ)
-//(Ïðèìå÷àíèå2: â áèáëèîòåêå íå äîëæíî áûòü êíèã áåçûìÿííûõ è áåç íàçâàíèÿ);
-//Á) Â îòäåëüíîé ïðîöåäóðå âûâåñòè íà êîíñîëü, èñïîëüçóÿ îïåðàòîð switch,
-//êîëè÷åñòâî õóäîæåñòâåííîé ëèòåðàòóðû è òåõíè÷åñêîé;
-//Â) Â äîïîëíèòåëüíîé ïðîöåäóðå âûâåñòè íà êîíñîëü òå æå äàííûå, íå ïðèìåíÿÿ
-//îïåðàòîð switch.
-//Ïðîãðàììà äîëæíà ôóíêöèîíèðîâàòü êîððåêòíî(ñëåäèòü çà íåäîïóùåíèåì
-//	óòå÷êè ïàìÿòè).
 
-enum class Type_book {
-	tech,
-	art
-};
-
-class book {
+class Car {
 private:
-	string name_author, name_book; 
-	Type_book type_book;
+    const std::string model;
+    const std::string brand;
 public:
-	book(const string& name_author_pub, const string& name_book_pub, Type_book type_book_pub) {
-		name_author = name_author_pub;
-		name_book = name_book_pub;
-		type_book = type_book_pub;
-	}
-	void print() const {
-		switch (type_book)
-		{
-		case Type_book::art:
-			cout << name_author << '\t' << name_book << '\t' << "Õóäîæåñòâåííàÿ" << endl; 
-			break;
-		case Type_book::tech:
-			cout << name_author << '\t' << name_book << '\t' << "Òåõíè÷åñêàÿ" << endl;
-			break;
-		}
-	}
-	Type_book get_type() const {
-		return type_book;
-	}
 
+    const std::string& get_model()
+    {
+        return model;
+    }
+    const std::string& get_brand() {
+        return brand;
+    }
+
+    Car(const std::string& _model, const std::string& _brand) : model(_model), brand(_brand) {}
+    virtual void print() = 0;
+
+    virtual ~Car() {}
 };
 
-class library {
-private:
-	vector <book*> bibliothek;
-	Type_book getTypeFromString(const string& str) {
-		if (str == "Õóäîæåñòâåííàÿ")
-		{
-			return Type_book::art;
-		}
-		if (str == "Òåõíè÷åñêàÿ")
-		{
-			return Type_book::tech;
-		}
-	}
+class Mercedes : public Car {
 public:
-	void add_book(const string& name_author, const string& name_book, const string& type_book) {
-		if (!name_author.empty() && !name_book.empty() && (type_book == "Òåõíè÷åñêàÿ" || type_book == "Õóäîæåñòâåííàÿ")) {
-			bibliothek.emplace_back(new book(name_author, name_book, this->getTypeFromString(type_book)));
-		}
-		else {
-			cout << "Ââåäèòå êîððåêòíûå äàííûå" << endl;
-		}
-	}
-	void print_all() const {
-		for (book* element : bibliothek) {
-			element->print();
-		}
-	}
-	void count_type_book() const { 
-		int count_technikal_book = 0;
-		int count_art_book = 0;
-		for (book* element : bibliothek) {
-			switch (element->get_type())
-			{
-			case Type_book::tech:
-				count_technikal_book++;
-				break;
-			case Type_book::art:
-				count_art_book++;
-			}
-		}
-		cout << "Êîë-âî òåõíè÷åñêîé ëèòåðàòóðû - " << count_technikal_book << " êíèã\t" << "Êîë-âî õóäîæåñòâåííîé ëèòåðàòóðû - " << count_art_book << " êíèã" << endl;
-	}
-	void count_type_book2() const {
-		int count_technikal_book = 0;
-		int count_art_book = 0;
-		for (book* element : bibliothek) {
-			if (element->get_type() == Type_book::tech) {
-				count_technikal_book++;
-				continue;
-			}
-			if (element->get_type() == Type_book::art) {
-				count_art_book++;
-			}
-		}
-		cout << "Êîë-âî òåõíè÷åñêîé ëèòåðàòóðû - " << count_technikal_book << " êíèã\t" << "Êîë-âî õóäîæåñòâåííîé ëèòåðàòóðû - " << count_art_book << " êíèã" << endl;
-	}
-	~library() {
-		for (book* element : bibliothek) {
-			delete element;
-		}
-	}
-
+    Mercedes(const std::string& _model, const std::string& _brand) : Car(_model, _brand) {}
+    void print() override {
+        std::cout << get_brand() << ": \n" << get_model() << std::endl;
+    }
 };
 
+class Audi : public Car {
+public:
+    Audi(const std::string& _model, const std::string& _brand) : Car(_model, _brand) {}
+
+    void print() override {
+        std::cout << get_brand() << ": \n" << get_model() << std::endl;
+    }
+};
 
 int main() {
-	setlocale(LC_ALL, "Rus");
-	library bibliothek;
-	bibliothek.add_book("Ëåâ Òîëñòîé", "Âîéíà è Ìèð", "Õóäîæåñòâåííàÿ");
-	bibliothek.add_book("Ëåâ Òîëñòîé", "Âîéíà è Ìèð", "Õóäîæåñòâåííàÿ");
-	bibliothek.print_all();
-	bibliothek.count_type_book();
-	bibliothek.count_type_book2();
-	return 0;
+    setlocale(LC_ALL, "Russian");
+    std::vector<Car*> cars;
+
+    std::ifstream file("cars.txt"); // открытие файла
+    if (file.is_open()) {
+
+        std::string brand, model;
+        while (file >> brand >> model) {
+
+            Car* car; //указатель на новый объект
+            if (brand == "Мерседес") {
+                car = new Mercedes(model, brand);
+            }
+            else if (brand == "Ауди") {
+                car = new Audi(model, brand);
+            }
+            else {
+                std::cout <<"Error " << std::endl;
+            }
+
+            cars.push_back(car);
+        }
+
+    }
+    file.close(); // закрытие файла
+    for (auto car : cars) { car->print(); };
+
+    for (auto car : cars) { delete car; };
+
+    return 0;
 }
+
